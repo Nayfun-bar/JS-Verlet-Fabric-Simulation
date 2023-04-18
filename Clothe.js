@@ -2,8 +2,8 @@ window.addEventListener("load", function(){
     var canvas = document.getElementById("canvas2"),
         context = canvas.getContext("2d"),
         ResetButton = this.document.getElementById("ResetCanvas2"),
-        width = canvas.width = 300,//window.innerWidth,
-        height = canvas.height = 300;//window.innerHeight;
+        width = canvas.width = 600, //will be resized later
+        height = canvas.height = 600; //will be resized later
 
     var points,
         sticks,
@@ -29,6 +29,14 @@ window.addEventListener("load", function(){
     }
 
     function InitialiseScene(){
+        var canvasDim = 300;
+        if (window.innerHeight - 20 > window.innerWidth) {
+            canvasDim = window.innerWidth;
+        } else {
+            canvasDim = window.innerHeight - 20;
+        }
+        height = canvas.height = width = canvas.width = canvasDim;
+
         points = [];
         sticks = [];
         bounce = 0.3;
@@ -37,7 +45,7 @@ window.addEventListener("load", function(){
         offset = - width * 0.2;
         GridWidth = width * 0.8;
         GridHeight = height * 0.5;
-        LineNumber = 40;
+        LineNumber = 60;
         ColonneNumber = LineNumber * GridWidth/GridHeight;
         SquareWidth = GridWidth/ColonneNumber;
         SquareHeight = GridHeight/LineNumber;
@@ -75,14 +83,12 @@ window.addEventListener("load", function(){
     update();
 
     function update(){
-        BreakSticks();
         updatePoints();
         for(var i = 0; i < 6; i++){
             updateSticks();
             constainPoints();
         }
         context.clearRect(0,0,width,height);
-        //renderPoints();
         renderSticks();
         requestAnimationFrame(update);
     }
@@ -151,15 +157,6 @@ window.addEventListener("load", function(){
         }
     }
 
-    function renderPoints(){
-        for(var i = 0; i < points.length; i++){
-            var p = points[i];
-            context.beginPath();
-            context.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
-            context.fill();
-        }
-    }
-
     function renderSticks(){
         context.beginPath();
         for (var i = 0; i < sticks.length; i++){
@@ -172,29 +169,22 @@ window.addEventListener("load", function(){
         context.stroke();
     }
 
-    function getMousePosition(canvas, event) {
-        let rect = canvas.getBoundingClientRect();
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
-        console.log("Coordinate x: " + x, 
-                    "Coordinate y: " + y);
-    }
-
     function BreakSticks(){
-        if (Clicking) {
-            sticks.forEach(element => {
-                if (distance(element.p0,ClickLocation) < CutRadius || distance(element.p1,ClickLocation) < CutRadius) {
-                    sticks.splice(sticks.indexOf(element), 1);
-                }
-            });
-        }
+        sticks.forEach(element => {
+            if (distance(element.p0,ClickLocation) < CutRadius || distance(element.p1,ClickLocation) < CutRadius) {
+                sticks.splice(sticks.indexOf(element), 1);
+            }
+        });
     }
 
     function UpdateClickPosition(event){
-        let rect = canvas.getBoundingClientRect();
-        let x0 = event.clientX - rect.left;
-        let y0 = event.clientY - rect.top;
-        ClickLocation = {x : x0, y : y0};
+        if (Clicking) {
+            let rect = canvas.getBoundingClientRect();
+            let x0 = event.clientX - rect.left;
+            let y0 = event.clientY - rect.top;
+            ClickLocation = {x : x0, y : y0};
+            BreakSticks();
+        }
     }
 
     function EngageClick(){
@@ -216,9 +206,5 @@ window.addEventListener("load", function(){
     });
 
     ResetButton.addEventListener("click", InitialiseScene);
-
-    /*document.body.addEventListener("click", function(event){
-        sticks.splice(Math.floor(Math.random() * (sticks.length)), 20);
-    });*/
 
 });
