@@ -1,7 +1,7 @@
 window.addEventListener("load", function(){
-    var canvas = document.getElementById("canvas2"),
+    var canvas = document.getElementById("canvas"),
         context = canvas.getContext("2d"),
-        ResetButton = this.document.getElementById("ResetCanvas2"),
+        ResetButton = this.document.getElementById("ResetCanvas"),
         width = canvas.width = 600, //will be resized later
         height = canvas.height = 600; //will be resized later
 
